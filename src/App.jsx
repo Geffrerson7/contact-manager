@@ -8,6 +8,7 @@ const contacts = [
     name: "Ana García",
     phone: "+1 (555) 123-4567",
     email: "ana@email.com",
+    role: "Amigo",
     isFavorite: true,
   },
   {
@@ -15,6 +16,7 @@ const contacts = [
     name: "Carlos López",
     phone: "+1 (555) 987-6543",
     email: "carlos@email.com",
+    role: "Trabajo",
     isFavorite: false,
   },
   {
@@ -22,6 +24,7 @@ const contacts = [
     name: "María Torres",
     phone: "+1 (555) 456-7890",
     email: "maria@email.com",
+    role: "Familia",
     isFavorite: true,
   },
 ];

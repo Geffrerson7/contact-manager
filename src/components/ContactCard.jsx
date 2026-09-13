@@ -1,6 +1,8 @@
-export default function ContactCard({ name, phone, email, isFavorite }) {
+export default function ContactCard({ name, phone, email, role, isFavorite }) {
   const cardStyle = {
-    border: isFavorite ? "2px solid var(--favorite)" : "1px solid var(--border)",
+    border: isFavorite
+      ? "2px solid var(--favorite)"
+      : "1px solid var(--border)",
     borderRadius: "8px",
     padding: "15px",
     marginBottom: "10px",
@@ -14,6 +16,15 @@ export default function ContactCard({ name, phone, email, isFavorite }) {
         {name}
         <span style={{ marginLeft: "10px" }}>{isFavorite ? "⭐" : "☆"}</span>
       </h3>
+      <p
+        style={{
+          margin: "5px 0",
+          color: "var(--secondary)",
+          fontWeight: "600",
+        }}
+      >
+        👤 {role}
+      </p>
       <p style={{ margin: "5px 0", color: "var(--muted-text)" }}>📞 {phone}</p>
       <p style={{ margin: "5px 0", color: "var(--muted-text)" }}>✉️ {email}</p>
     </div>

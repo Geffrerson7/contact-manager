@@ -13,6 +13,7 @@ export default function ContactList({ contacts }) {
             name={contact.name}
             phone={contact.phone}
             email={contact.email}
+            role={contact.role}
             isFavorite={contact.isFavorite}
           />
         );
