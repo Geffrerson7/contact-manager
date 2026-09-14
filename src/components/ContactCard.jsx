@@ -1,3 +1,5 @@
+import Badge from "./Badge";
+
 export default function ContactCard({ name, phone, email, role, isFavorite }) {
   const cardStyle = {
     border: isFavorite
@@ -16,15 +18,9 @@ export default function ContactCard({ name, phone, email, role, isFavorite }) {
         {name}
         <span style={{ marginLeft: "10px" }}>{isFavorite ? "⭐" : "☆"}</span>
       </h3>
-      <p
-        style={{
-          margin: "5px 0",
-          color: "var(--secondary)",
-          fontWeight: "600",
-        }}
-      >
-        👤 {role}
-      </p>
+      <div style={{ margin: "5px 0" }}>
+        <Badge text={role} color="var(--role)" />
+      </div>
       <p style={{ margin: "5px 0", color: "var(--muted-text)" }}>📞 {phone}</p>
       <p style={{ margin: "5px 0", color: "var(--muted-text)" }}>✉️ {email}</p>
     </div>
