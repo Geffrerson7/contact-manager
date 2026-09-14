@@ -12,6 +12,8 @@
   --card-text: #333;
   --muted-text: #666;
   --empty-text: #999;
+  --role: #d97706;
+  --role-bg: #fff7ed;
 
   /* Fonts */
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
