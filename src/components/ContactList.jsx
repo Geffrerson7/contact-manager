@@ -1,6 +1,10 @@
 import ContactCard from "./ContactCard";
 
-export default function ContactList({ contacts, onDeleteContact }) {
+export default function ContactList({
+  contacts,
+  onDeleteContact,
+  onToggleFavorite,
+}) {
   if (contacts.length === 0) {
     return <p style={{ color: "var(--empty-text)" }}>No hay contactos</p>;
   }
@@ -22,6 +26,9 @@ export default function ContactList({ contacts, onDeleteContact }) {
               email={contact.email}
               role={contact.role}
               isFavorite={contact.isFavorite}
+              onToggleFavorite={function () {
+                onToggleFavorite(contact.id);
+              }}
             />
 
             <button

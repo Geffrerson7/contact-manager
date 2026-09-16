@@ -60,6 +60,17 @@ export default function App() {
     setContacts([]);
   }
 
+  function handleToggleFavorite(contactId) {
+    const updatedContacts = contacts.map(function (contact) {
+      if (contact.id === contactId) {
+        return { ...contact, isFavorite: !contact.isFavorite };
+      }
+      return contact;
+    });
+
+    setContacts(updatedContacts);
+  }
+
   return (
     <div>
       <Header />
@@ -153,6 +164,7 @@ export default function App() {
         <ContactList
           contacts={contacts}
           onDeleteContact={handleDeleteContact}
+          onToggleFavorite={handleToggleFavorite}
         />
       </main>
       <Footer />
