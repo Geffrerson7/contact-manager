@@ -98,10 +98,10 @@ export default function App() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="#ffffff"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="icon icon-tabler icons-tabler-outline icon-tabler-users-plus"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="icon icon-tabler icons-tabler-outline icon-tabler-users-plus"
             >
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M5 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
@@ -135,10 +135,10 @@ export default function App() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="#ffffff"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="icon icon-tabler icons-tabler-outline icon-tabler-trash-x"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="icon icon-tabler icons-tabler-outline icon-tabler-trash-x"
             >
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M4 7h16" />
