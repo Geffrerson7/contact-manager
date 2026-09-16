@@ -48,6 +48,14 @@ export default function App() {
     setContacts([...contacts, newContact]);
   }
 
+  function handleDeleteContact(contactId) {
+    const updatedContacts = contacts.filter(function (contact) {
+      return contact.id !== contactId;
+    });
+
+    setContacts(updatedContacts);
+  }
+
   return (
     <div>
       <Header />
@@ -70,7 +78,10 @@ export default function App() {
         >
           + Agregar Contacto
         </button>
-        <ContactList contacts={contacts} />
+        <ContactList
+          contacts={contacts}
+          onDeleteContact={handleDeleteContact}
+        />
       </main>
       <Footer />
     </div>
