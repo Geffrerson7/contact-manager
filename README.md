@@ -4,27 +4,28 @@ Aplicación web desarrollada con **React** y **Vite** para visualizar y gestiona
 
 ## 🚀 Tecnologías
 
-* React
-* Vite
-* JavaScript
-* CSS
-* ESLint
+- React
+- Vite
+- JavaScript
+- CSS
+- ESLint
 
 ## 📋 Funcionalidades actuales
 
-* Visualización de una lista de contactos.
-* Información de cada contacto:
+- Visualización de una lista de contactos.
+- Información de cada contacto:
 
-  * Nombre
-  * Teléfono
-  * Correo electrónico
-  * Rol
-* Identificación visual de contactos favoritos.
-* Indicador de favorito mediante ⭐.
-* Estilos diferentes para contactos favoritos.
-* Badge reutilizable para mostrar el rol del contacto.
-* Diseño responsive básico.
-* Estado visual para una lista sin contactos.
+  - Nombre
+  - Teléfono
+  - Correo electrónico
+  - Rol
+
+- Identificación visual de contactos favoritos.
+- Indicador de favorito mediante ⭐.
+- Estilos diferentes para contactos favoritos.
+- Badge reutilizable para mostrar el rol del contacto.
+- Diseño responsive básico.
+- Estado visual para una lista sin contactos.
 
 ## 📁 Estructura del proyecto
 
@@ -50,9 +51,9 @@ Componente principal de la aplicación.
 
 Se encarga de:
 
-* Definir los datos iniciales de los contactos.
-* Calcular la cantidad de contactos favoritos.
-* Integrar los componentes principales de la aplicación.
+- Definir los datos iniciales de los contactos.
+- Calcular la cantidad de contactos favoritos.
+- Integrar los componentes principales de la aplicación.
 
 ### `Header`
 
@@ -69,11 +70,11 @@ Representa individualmente la información de un contacto.
 Recibe mediante props:
 
 ```jsx
-name
-phone
-email
-role
-isFavorite
+name;
+phone;
+email;
+role;
+isFavorite;
 ```
 
 La tarjeta modifica su apariencia dependiendo de si el contacto está marcado como favorito.
@@ -85,10 +86,7 @@ Componente reutilizable utilizado para mostrar el rol del contacto.
 Recibe dos props:
 
 ```jsx
-<Badge
-  text={role}
-  color="var(--role)"
-/>
+<Badge text={role} color="var(--role)" />
 ```
 
 El componente utiliza `color` para definir el color del texto y `var(--role-bg)` como color de fondo.
@@ -118,7 +116,7 @@ Los colores principales se encuentran definidos como variables CSS en `index.css
 ```css
 :root {
   --primary: #f3f4f6;
-  --secondary: #646CFF;
+  --secondary: #646cff;
   --accent: #b269ea;
   --bg: #16171d;
   --border: #b6b4b8;
@@ -197,32 +195,32 @@ npm run preview
 
 Este proyecto permite practicar conceptos fundamentales de React y JavaScript:
 
-* Componentes funcionales
-* Props
-* Renderizado dinámico
-* `.map()`
-* Condicionales
-* Arrays de objetos
-* Estilos inline
-* Variables CSS
-* Componentes reutilizables
-* Renderizado de listas con `key`
-* Organización de componentes
-* Comunicación entre componentes mediante props
+- Componentes funcionales
+- Props
+- Renderizado dinámico
+- `.map()`
+- Condicionales
+- Arrays de objetos
+- Estilos inline
+- Variables CSS
+- Componentes reutilizables
+- Renderizado de listas con `key`
+- Organización de componentes
+- Comunicación entre componentes mediante props
 
 ## 🔮 Próximas mejoras
 
 Algunas funcionalidades que podrían incorporarse posteriormente:
 
-* Agregar nuevos contactos.
-* Editar contactos.
-* Eliminar contactos.
-* Marcar y desmarcar favoritos.
-* Buscar contactos.
-* Filtrar contactos por rol.
-* Mostrar todos los contactos o solo favoritos.
-* Persistir los datos utilizando `localStorage`.
-* Conectar la aplicación con una API REST.
+- Agregar nuevos contactos.
+- Editar contactos.
+- Eliminar contactos.
+- Marcar y desmarcar favoritos.
+- Buscar contactos.
+- Filtrar contactos por rol.
+- Mostrar todos los contactos o solo favoritos.
+- Persistir los datos utilizando `localStorage`.
+- Conectar la aplicación con una API REST.
 
 ## 👨‍💻 Autor
 
