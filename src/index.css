@@ -1,38 +1,111 @@
 :root {
-  /* Colors */
-  --primary: #f3f4f6;
-  --secondary: #646CFF;
+  /* =========================
+     Colors - Light Mode
+     ========================= */
+
+  --primary: #1f2937;
+
+  --secondary: #646cff;
   --accent: #b269ea;
-  --bg: #16171d;
-  --border: #b6b4b8;
 
-  --favorite: #ffd700;
-  --favorite-bg: #fffef0;
-  --card-bg: #fff;
-  --card-text: #333;
-  --muted-text: #666;
-  --empty-text: #999;
+  --bg: #f3f4f6;
+  --border: #d1d5db;
+
+  /* Contact card */
+  --card-border: linear-gradient(135deg, #646cff, #b269ea);
+
+  --card-border-hover: linear-gradient(135deg, #818cf8, #c084fc, #ec4899);
+
+  /* Favorite contact */
+  --favorite-border: linear-gradient(135deg, #0ea5e9, #10b981);
+
+  --favorite-border-hover: linear-gradient(135deg, #0284c7, #06b6d4, #059669);
+
+  --navbar-bg-color: #ffffff;
+
+  --favorite: #059669;
+  --favorite-bg: #ecfdf5;
+
+  --card-bg: #ffffff;
+  --card-text: #333333;
+
+  --muted-text: #666666;
+  --empty-text: #999999;
+
   --role: #d97706;
-  --role-bg: #fff7ed;
+  --role-bg: #fffbeb;
 
-  /* Fonts */
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --info-gradient-start: #0ea5e9;
+  --info-gradient-end: #10b981;
+
+  /* =========================
+     Fonts
+     ========================= */
+
+  --sans: system-ui, "Segoe UI", Roboto, sans-serif;
+  --heading: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+
+  color-scheme: light;
+
   color: var(--primary);
   background: var(--bg);
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
   @media (max-width: 1024px) {
     font-size: 16px;
   }
+}
+
+/* =========================
+   Dark Mode
+   ========================= */
+
+:root[data-theme="dark"] {
+  --primary: #f3f4f6;
+
+  --secondary: #818cf8;
+  --accent: #c084fc;
+
+  --bg: #16171d;
+  --border: #3f414b;
+
+  /* Contact card */
+  --card-border: linear-gradient(135deg, #818cf8, #c084fc);
+
+  --card-border-hover: linear-gradient(135deg, #a5b4fc, #c084fc, #f0abfc);
+
+  /* Favorite contact */
+  --favorite-border: linear-gradient(135deg, #38bdf8, #34d399);
+
+  --favorite-border-hover: linear-gradient(135deg, #22d3ee, #2dd4bf, #4ade80);
+
+  --navbar-bg-color: #1f2029;
+
+  --favorite: #34d399;
+  --favorite-bg: #102a2a;
+
+  --card-bg: #202127;
+  --card-text: #f3f4f6;
+
+  --muted-text: #a1a1aa;
+  --empty-text: #71717a;
+
+  --role: #fbbf24;
+  --role-bg: #292211;
+
+  --info-gradient-start: #38bdf8;
+  --info-gradient-end: #34d399;
+
+  color-scheme: dark;
 }
 
 body {
