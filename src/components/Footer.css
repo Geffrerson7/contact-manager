@@ -1,0 +1,16 @@
+.footer {
+  margin-top: 40px;
+  padding: 20px;
+
+  border-top: 1px solid var(--border);
+
+  color: var(--muted-text);
+
+  text-align: center;
+}
+
+.copyright {
+  margin: 0;
+
+  font-size: 14px;
+}

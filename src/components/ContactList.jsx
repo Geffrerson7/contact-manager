@@ -1,4 +1,5 @@
 import ContactCard from "./ContactCard";
+import "./ContactList.css";
 
 export default function ContactList({
   contacts,
@@ -6,21 +7,16 @@ export default function ContactList({
   onToggleFavorite,
 }) {
   if (contacts.length === 0) {
-    return <p style={{ color: "var(--empty-text)" }}>No hay contactos</p>;
+    return <p className="contact-list__empty">No hay contactos</p>;
   }
 
   return (
-    <div>
+    <div className="contact-list">
       {contacts.map(function (contact) {
         return (
-          <div
-            key={contact.id}
-            style={{
-              position: "relative",
-              marginBottom: "10px",
-            }}
-          >
+          <div className="contact-list__item" key={contact.id}>
             <ContactCard
+              id={contact.id}
               name={contact.name}
               phone={contact.phone}
               email={contact.email}
@@ -32,26 +28,13 @@ export default function ContactList({
             />
 
             <button
-              onClick={function () {
+              className="contact-list__delete-button"
+              onClick={function (event) {
+                event.stopPropagation();
                 onDeleteContact(contact.id);
               }}
               aria-label={`Eliminar a ${contact.name}`}
               title="Eliminar contacto"
-              style={{
-                position: "absolute",
-                top: "10px",
-                right: "10px",
-                width: "36px",
-                height: "36px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "0",
-                backgroundColor: "#ff4444",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +42,7 @@ export default function ContactList({
                 height="20"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#ffffff"
+                stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
