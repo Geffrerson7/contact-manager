@@ -1,0 +1,60 @@
+.about-page {
+  min-height: 60vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 40px 20px;
+
+  text-align: center;
+}
+
+.about-page__card {
+  box-sizing: border-box;
+
+  width: 100%;
+  max-width: 500px;
+
+  padding: 40px 30px;
+
+  border: 1px solid transparent;
+  border-radius: 12px;
+
+  background:
+    linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+    var(--card-border) border-box;
+
+  color: var(--card-text);
+}
+
+.about-page__title {
+  margin: 0 0 15px;
+
+  font-size: 36px;
+  color: var(--secondary);
+}
+
+.about-page__name {
+  margin: 0 0 10px;
+
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.about-page__version {
+  margin: 0;
+
+  color: var(--muted-text);
+}
+
+.about-page__description {
+  margin: 20px 0 0;
+  padding-top: 20px;
+
+  border-top: 1px solid var(--border);
+
+  color: var(--muted-text);
+  font-size: 15px;
+}
