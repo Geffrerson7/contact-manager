@@ -1,13 +1,9 @@
-export default function Badge({ text, color }) {
-  const badgeStyle = {
-    display: "inline-block",
-    padding: "4px 10px",
-    borderRadius: "12px",
-    backgroundColor: "var(--role-bg)",
-    color: color,
-    fontSize: "14px",
-    fontWeight: "600",
-  };
+import "./Badge.css";
 
-  return <span style={badgeStyle}>{text}</span>;
+export default function Badge({ text, color }) {
+  return (
+    <span className="badge" style={{ color }}>
+      {text}
+    </span>
+  );
 }
