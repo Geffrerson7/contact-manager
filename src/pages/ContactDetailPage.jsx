@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Badge from "../components/Badge";
 import "./ContactDetailPage.css";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 export default function ContactDetailPage() {
   const { id } = useParams();
@@ -107,11 +108,7 @@ export default function ContactDetailPage() {
 
   return (
     <main className="contact-detail">
-      <div className="contact-detail__back">
-        <Link to="/" className="contact-detail__back-link">
-          ← Volver al inicio
-        </Link>
-      </div>
+      <Breadcrumbs contact={contact} />
 
       <section
         className={`contact-detail__card ${
