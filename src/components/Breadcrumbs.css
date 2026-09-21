@@ -1,0 +1,32 @@
+.breadcrumbs {
+  margin: 10px 0 20px 0;
+  text-align: left;
+}
+
+.breadcrumbs__item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.breadcrumbs__link {
+  color: var(--secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.breadcrumbs__link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.breadcrumbs__separator {
+  margin: 0 8px;
+  color: var(--empty-text);
+  user-select: none;
+}
+
+.breadcrumbs__item--active {
+  color: var(--primary);
+  font-weight: 600;
+}
