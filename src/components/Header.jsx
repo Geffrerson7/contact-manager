@@ -1,11 +1,11 @@
-import "./Header.css";
+import styles from "./Header.module.css";
 
 export default function Header() {
   return (
-    <header className="header">
-      <h1 className="header__title">
+    <header className={styles["header"]}>
+      <h1 className={styles["header__title"]}>
         <svg
-          className="header__icon"
+          className={styles["header__icon"]}
           xmlns="http://www.w3.org/2000/svg"
           width="32"
           height="32"
@@ -25,7 +25,7 @@ export default function Header() {
         <span>Contact Manager</span>
       </h1>
 
-      <p className="header__subtitle">
+      <p className={styles["header__subtitle"]}>
         Gestiona tus contactos de forma sencilla
       </p>
     </header>

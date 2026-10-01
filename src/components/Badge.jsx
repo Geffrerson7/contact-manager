@@ -1,8 +1,8 @@
-import "./Badge.css";
+import styles from "./Badge.module.css";
 
 export default function Badge({ text, color }) {
   return (
-    <span className="badge" style={{ color }}>
+    <span className={styles.badge} style={{ color }}>
       {text}
     </span>
   );

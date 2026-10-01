@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import styles from "./Navbar.module.css";
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(() => {
@@ -23,7 +24,7 @@ export default function ThemeToggle() {
   return (
     <button
       type="button"
-      className="navbar__theme-toggle"
+      className={styles["navbar__theme-toggle"]}
       onClick={handleToggleTheme}
       aria-label={isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
       title={isDark ? "Modo claro" : "Modo oscuro"}
