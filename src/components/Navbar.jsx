@@ -1,14 +1,14 @@
 import { NavLink } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
-import "./Navbar.css";
+import styles from "./Navbar.module.css";
 
 export default function Navbar() {
   return (
-    <nav className="navbar">
+    <nav className={styles["navbar"]}>
       <NavLink
         to="/"
         className={({ isActive }) =>
-          `navbar__link ${isActive ? "navbar__link--active" : ""}`
+          `${styles["navbar__link"]} ${isActive ? styles["navbar__link--active"] : ""}`
         }
       >
         <svg
@@ -33,7 +33,7 @@ export default function Navbar() {
       <NavLink
         to="/about"
         className={({ isActive }) =>
-          `navbar__link ${isActive ? "navbar__link--active" : ""}`
+          `${styles["navbar__link"]} ${isActive ? styles["navbar__link--active"] : ""}`
         }
       >
         <svg
@@ -58,7 +58,7 @@ export default function Navbar() {
       <NavLink
         to="/search"
         className={({ isActive }) =>
-          `navbar__link ${isActive ? "navbar__link--active" : ""}`
+          `${styles["navbar__link"]} ${isActive ? styles["navbar__link--active"] : ""}`
         }
       >
         <svg

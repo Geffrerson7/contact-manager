@@ -1,30 +1,30 @@
 import { Link } from "react-router-dom";
-import "./Breadcrumbs.css";
+import styles from "./Breadcrumbs.module.css";
 
 export default function Breadcrumbs({ contact }) {
   return (
-    <nav className="breadcrumbs" aria-label="Breadcrumb">
-      <Link to="/" className="breadcrumbs__link">
+    <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
+      <Link to="/" className={styles["breadcrumbs__link"]}>
         Home
       </Link>
 
-      <span className="breadcrumbs__separator" aria-hidden="true">
+      <span className={styles["breadcrumbs__separator"]} aria-hidden="true">
         {" "}
         &gt;{" "}
       </span>
 
-      <Link to="/search" className="breadcrumbs__link breadcrumbs__item">
+      <Link to="/search" className={styles["breadcrumbs__link"] + " " + styles["breadcrumbs__item"]}>
         Contacto
       </Link>
 
-      <span className="breadcrumbs__separator" aria-hidden="true">
+      <span className={styles["breadcrumbs__separator"]} aria-hidden="true">
         {" "}
         &gt;{" "}
       </span>
 
       <Link
         to={`/contact/${contact.id}`}
-        className="breadcrumbs__item breadcrumbs__item--active"
+        className={styles["breadcrumbs__item"] + " " + styles["breadcrumbs__item--active"]}
       >
         {contact.name}
       </Link>

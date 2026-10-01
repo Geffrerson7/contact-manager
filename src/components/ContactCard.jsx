@@ -1,6 +1,6 @@
 import Badge from "./Badge";
 import { useNavigate } from "react-router-dom";
-import "./ContactCard.css";
+import styles from "./ContactCard.module.css";
 
 export default function ContactCard({
   id,
@@ -19,14 +19,14 @@ export default function ContactCard({
 
   return (
     <div
-      className={`contact-card ${isFavorite ? "contact-card--favorite" : ""}`}
+      className={`${styles["contact-card"]} ${isFavorite ? styles["contact-card--favorite"] : ""}`}
       onClick={handleClick}
     >
-      <div className="contact-card__header">
-        <h3 className="contact-card__name">{name}</h3>
+      <div className={styles["contact-card__header"]}>
+        <h3 className={styles["contact-card__name"]}>{name}</h3>
 
         <button
-          className="contact-card__favorite-button"
+          className={styles["contact-card__favorite-button"]}
           onClick={function (event) {
             event.stopPropagation();
             onToggleFavorite();
@@ -72,13 +72,13 @@ export default function ContactCard({
         </button>
       </div>
 
-      <div className="contact-card__role">
+      <div className={styles["contact-card__role"]}>
         <Badge text={role} color="var(--role)" />
       </div>
 
-      <div className="contact-card__info">
+      <div className={styles["contact-card__info"]}>
         <svg
-          className="contact-card__info-icon"
+          className={styles["contact-card__info-icon"]}
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
@@ -100,7 +100,7 @@ export default function ContactCard({
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
 
           <path
-            className="contact-card__info-icon-path"
+            fill="url(#phone-gradient)"
             d="M9 3a1 1 0 0 1 .877 .519l.051 .11l2 5a1 1 0 0 1 -.313 1.16l-.1 .068l-1.674 1.004l.063 .103a10 10 0 0 0 3.132 3.132l.102 .062l1.005 -1.672a1 1 0 0 1 1.113 -.453l.115 .039l5 2a1 1 0 0 1 .622 .807l.007 .121v4c0 1.657 -1.343 3 -3.06 2.998c-8.579 -.521 -15.418 -7.36 -15.94 -15.998a3 3 0 0 1 2.824 -2.995l.176 -.005h4z"
           />
         </svg>
@@ -108,9 +108,9 @@ export default function ContactCard({
         <span>{phone}</span>
       </div>
 
-      <p className="contact-card__info">
+      <p className={styles["contact-card__info"]}>
         <svg
-          className="contact-card__info-icon"
+          className={styles["contact-card__info-icon"]}
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"

@@ -1,5 +1,5 @@
 import ContactCard from "./ContactCard";
-import "./ContactList.css";
+import styles from "./ContactList.module.css";
 
 export default function ContactList({
   contacts,
@@ -7,14 +7,14 @@ export default function ContactList({
   onToggleFavorite,
 }) {
   if (contacts.length === 0) {
-    return <p className="contact-list__empty">No hay contactos</p>;
+    return <p className={styles["contact-list__empty"]}>No hay contactos</p>;
   }
 
   return (
-    <div className="contact-list">
+    <div className={styles["contact-list"]}>
       {contacts.map(function (contact) {
         return (
-          <div className="contact-list__item" key={contact.id}>
+          <div className={styles["contact-list__item"]} key={contact.id}>
             <ContactCard
               id={contact.id}
               name={contact.name}
@@ -28,7 +28,7 @@ export default function ContactList({
             />
 
             <button
-              className="contact-list__delete-button"
+              className={styles["contact-list__delete-button"]}
               onClick={function (event) {
                 event.stopPropagation();
                 onDeleteContact(contact.id);

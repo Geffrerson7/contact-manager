@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ContactList from "../components/ContactList";
-import "./SearchPage.css";
+import styles from "./SearchPage.module.css";
 
 export default function SearchPage() {
   const [contacts, setContacts] = useState([
@@ -83,18 +83,18 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="search-page">
-      <h2>Buscar Contactos</h2>
+    <div className={styles["search-page"]}>
+      <h2 className={styles["search-page__title"]}>Buscar Contactos</h2>
 
-      <form onSubmit={handleSubmit} className="search-form">
+      <form onSubmit={handleSubmit} className={styles["search-form"]}>
         {/* Contenedor relativo para posicionar la X dentro */}
-        <div className="search-input-wrapper">
+        <div className={styles["search-input-wrapper"]}>
           <input
             type="text"
             placeholder="Busca por nombre, email o rol..."
             value={textInput}
             onChange={(e) => setTextInput(e.target.value)}
-            className="search-input"
+            className={styles["search-input"]}
           />
 
           {/* El botón "X" aparece dentro si hay texto escrito o una búsqueda activa */}
@@ -102,7 +102,7 @@ export default function SearchPage() {
             <button
               type="button"
               onClick={handleClear}
-              className="search-clear-inline"
+              className={styles["search-clear-inline"]}
               aria-label="Limpiar búsqueda"
               title="Limpiar"
             >
@@ -124,7 +124,7 @@ export default function SearchPage() {
           )}
         </div>
 
-        <button type="submit" className="search-submit-button">
+        <button type="submit" className={styles["search-submit-button"]}>
           Buscar
         </button>
       </form>
@@ -136,7 +136,7 @@ export default function SearchPage() {
           onToggleFavorite={handleToggleFavorite}
         />
       ) : (
-        <p className="no-results">No se encontraron contactos que coincidan.</p>
+        <p className={styles["no-results"]}>No se encontraron contactos que coincidan.</p>
       )}
     </div>
   );

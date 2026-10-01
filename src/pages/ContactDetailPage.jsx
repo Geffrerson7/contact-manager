@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Badge from "../components/Badge";
-import "./ContactDetailPage.css";
+import styles from "./ContactDetailPage.module.css";
 import Breadcrumbs from "../components/Breadcrumbs";
 
 export default function ContactDetailPage() {
@@ -54,9 +54,9 @@ export default function ContactDetailPage() {
 
   if (!contact) {
     return (
-      <div className="contact-detail__not-found">
-        <div className="contact-detail__not-found-card">
-          <div className="contact-detail__not-found-icon">
+      <div className={styles["contact-detail__not-found"]}>
+        <div className={styles["contact-detail__not-found-card"]}>
+          <div className={styles["contact-detail__not-found-icon"]}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="80"
@@ -76,15 +76,15 @@ export default function ContactDetailPage() {
             </svg>
           </div>
 
-          <h2 className="contact-detail__not-found-title">
+          <h2 className={styles["contact-detail__not-found-title"]}>
             Contacto no encontrado
           </h2>
 
-          <p className="contact-detail__not-found-description">
+          <p className={styles["contact-detail__not-found-description"]}>
             El contacto que buscas no existe o puede haber sido eliminado.
           </p>
 
-          <Link to="/" className="contact-detail__button">
+          <Link to="/" className={styles["contact-detail__button"]}>
             ← Volver al inicio
           </Link>
         </div>
@@ -107,19 +107,19 @@ export default function ContactDetailPage() {
   }
 
   return (
-    <main className="contact-detail">
+    <main className={styles["contact-detail"]}>
       <Breadcrumbs contact={contact} />
 
       <section
-        className={`contact-detail__card ${
-          contact.isFavorite ? "contact-detail__card--favorite" : ""
+        className={`${styles["contact-detail__card"]} ${
+          contact.isFavorite ? styles["contact-detail__card--favorite"] : ""
         }`}
       >
-        <div className="contact-detail__header">
-          <h1 className="contact-detail__name">{contact.name}</h1>
+        <div className={styles["contact-detail__header"]}>
+          <h1 className={styles["contact-detail__name"]}>{contact.name}</h1>
 
           <span
-            className="contact-detail__favorite"
+            className={styles["contact-detail__favorite"]}
             aria-label={
               contact.isFavorite ? "Contacto favorito" : "Contacto no favorito"
             }
@@ -128,10 +128,10 @@ export default function ContactDetailPage() {
           </span>
         </div>
 
-        <div className="contact-detail__info">
-          <div className="contact-detail__info-item">
+        <div className={styles["contact-detail__info"]}>
+          <div className={styles["contact-detail__info-item"]}>
             <svg
-              className="contact-detail__info-icon"
+              className={styles["contact-detail__info-icon"]}
               xmlns="http://www.w3.org/2000/svg"
               width="22"
               height="22"
@@ -146,15 +146,15 @@ export default function ContactDetailPage() {
               <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2" />
             </svg>
 
-            <div className="contact-detail__info-content">
+            <div className={styles["contact-detail__info-content"]}>
               <small>Teléfono</small>
               <span>{contact.phone}</span>
             </div>
           </div>
 
-          <div className="contact-detail__info-item">
+          <div className={styles["contact-detail__info-item"]}>
             <svg
-              className="contact-detail__info-icon"
+              className={styles["contact-detail__info-icon"]}
               xmlns="http://www.w3.org/2000/svg"
               width="22"
               height="22"
@@ -170,15 +170,19 @@ export default function ContactDetailPage() {
               <path d="M3 7l9 6l9 -6" />
             </svg>
 
-            <div className="contact-detail__info-content">
+            <div className={styles["contact-detail__info-content"]}>
               <small>Correo electrónico</small>
               <span>{contact.email}</span>
             </div>
           </div>
 
-          <div className="contact-detail__info-item">
+          <div className={styles["contact-detail__info-item"]}>
             <svg
-              className="contact-detail__info-icon contact-detail__info-icon--role"
+              className={
+                styles["contact-detail__info-icon"] +
+                " " +
+                styles["contact-detail__info-icon--role"]
+              }
               xmlns="http://www.w3.org/2000/svg"
               width="22"
               height="22"
@@ -199,7 +203,7 @@ export default function ContactDetailPage() {
               <path d="M9 18l0 .01" />
             </svg>
 
-            <div className="contact-detail__info-content">
+            <div className={styles["contact-detail__info-content"]}>
               <small>Rol</small>
 
               <Badge text={contact.role} color="var(--role)" />
@@ -208,9 +212,9 @@ export default function ContactDetailPage() {
         </div>
       </section>
 
-      <section className="contact-detail__navigation">
+      <section className={styles["contact-detail__navigation"]}>
         <button
-          className="contact-detail__navigation-button"
+          className={styles["contact-detail__navigation-button"]}
           disabled={!hasPrevious}
           onClick={handlePrevious}
         >
@@ -218,7 +222,7 @@ export default function ContactDetailPage() {
         </button>
 
         <button
-          className="contact-detail__navigation-button"
+          className={styles["contact-detail__navigation-button"]}
           disabled={!hasNext}
           onClick={handleNext}
         >

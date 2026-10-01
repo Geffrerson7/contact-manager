@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ContactList from "../components/ContactList";
-import "./HomePage.css";
+import styles from "./HomePage.module.css";
 
 export default function HomePage() {
   const [contacts, setContacts] = useState([
@@ -75,15 +75,15 @@ export default function HomePage() {
   }
 
   return (
-    <div className="home-page">
-      <p className="home-page__summary">
+    <div className={styles["home-page"]}>
+      <p className={styles["home-page__summary"]}>
         Total: {contacts.length} contactos | Favoritos: {favoriteCount}
       </p>
 
-      <main className="home-page__main">
-        <div className="home-page__actions">
+      <main className={styles["home-page__main"]}>
+        <div className={styles["home-page__actions"]}>
           <button
-            className="home-page__button home-page__button--add"
+            className={`${styles["home-page__button"]} ${styles["home-page__button--add"]}`}
             onClick={handleAddContact}
           >
             <svg
@@ -108,7 +108,7 @@ export default function HomePage() {
           </button>
 
           <button
-            className="home-page__button home-page__button--delete"
+            className={`${styles["home-page__button"]} ${styles["home-page__button--delete"]}`}
             onClick={handleDeleteAllContacts}
           >
             <svg
