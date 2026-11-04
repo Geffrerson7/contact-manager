@@ -22,3 +22,23 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Next.js
+.next
+out
+*.tsbuildinfo
+.eslintcache
+
+# Prisma
+src/generated
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Testing
+coverage
+
+prompt-*.md
+contact.json

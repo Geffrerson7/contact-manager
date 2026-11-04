@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  Amigo
+  Trabajo
+  Familia
+  Otro
+}
+
+enum UndoScope {
+  ONE
+  ALL
+}
+
+model Contact {
+  id             String     @id @db.Uuid
+  name           String     @db.VarChar(80)
+  phone          String     @default("") @db.VarChar(30)
+  email          String     @default("") @db.VarChar(254)
+  role           Role
+  company        String     @default("") @db.VarChar(80)
+  isFavorite     Boolean    @default(false)
+  createdAt      DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime   @default(now()) @db.Timestamptz(3)
+  deletedAt      DateTime?  @db.Timestamptz(3)
+  deletedBatchId String?    @db.Uuid
+  deletedBatch   UndoBatch? @relation(fields: [deletedBatchId], references: [id], onDelete: Cascade)
+
+  @@index([deletedAt])
+  @@index([deletedBatchId])
+  @@index([createdAt])
+  @@index([isFavorite])
+  @@map("contacts")
+}
+
+model UndoBatch {
+  id           String     @id @db.Uuid
+  scope        UndoScope
+  contactCount Int
+  createdAt    DateTime   @default(now()) @db.Timestamptz(3)
+  expiresAt    DateTime   @db.Timestamptz(3)
+  restoredAt   DateTime?  @db.Timestamptz(3)
+  contacts     Contact[]
+
+  @@index([expiresAt])
+  @@index([restoredAt])
+  @@map("undo_batches")
+}
+
+model SystemState {
+  key       String   @id @db.VarChar(64)
+  value     String   @db.VarChar(1024)
+  updatedAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@map("system_state")
+}

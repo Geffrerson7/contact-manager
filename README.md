@@ -1,229 +1,102 @@
 # 📱 Contact Manager
 
-Aplicación web desarrollada con **React** y **Vite** para visualizar y gestionar una lista de contactos.
+Aplicación full-stack para gestionar contactos. Fase 3 del proyecto: un único
+proyecto Next.js con App Router, TypeScript, Tailwind CSS v4, Prisma 7 y
+PostgreSQL.
+
+> Estado actual: **M0 completado** (infraestructura y verificación del entorno).
+> La funcionalidad de contactos se implementa a partir de M1.
+> Diseño completo: [`docs/fase-3-arquitectura.md`](docs/fase-3-arquitectura.md).
 
 ## 🚀 Tecnologías
 
-- React
-- Vite
-- JavaScript
-- CSS
-- ESLint
+| Área | Tecnología |
+|---|---|
+| Framework | Next.js 16 (App Router, Server Components, Route Handlers) |
+| Lenguaje | TypeScript 5.9 (`strict`, `noUncheckedIndexedAccess`) |
+| Estilos | Tailwind CSS v4 (tokens CSS, claro/oscuro) |
+| Persistencia | PostgreSQL 17 + Prisma 7 (`prisma-client` + `@prisma/adapter-pg`) |
+| Pruebas | Vitest 5, Testing Library, jsdom, `user-event` |
+| Lint | ESLint 9 (flat config) + `eslint-config-next` |
 
-## 📋 Funcionalidades actuales
+## ✅ Requisitos
 
-- Visualización de una lista de contactos.
-- Información de cada contacto:
-
-  - Nombre
-  - Teléfono
-  - Correo electrónico
-  - Rol
-
-- Identificación visual de contactos favoritos.
-- Indicador de favorito mediante ⭐.
-- Estilos diferentes para contactos favoritos.
-- Badge reutilizable para mostrar el rol del contacto.
-- Diseño responsive básico.
-- Estado visual para una lista sin contactos.
-
-## 📁 Estructura del proyecto
-
-```text
-src/
-├── components/
-│   ├── Badge.jsx
-│   ├── ContactCard.jsx
-│   ├── ContactList.jsx
-│   ├── Footer.jsx
-│   └── Header.jsx
-│
-├── App.jsx
-├── index.css
-└── main.jsx
-```
-
-## 🧩 Componentes
-
-### `App`
-
-Componente principal de la aplicación.
-
-Se encarga de:
-
-- Definir los datos iniciales de los contactos.
-- Calcular la cantidad de contactos favoritos.
-- Integrar los componentes principales de la aplicación.
-
-### `Header`
-
-Muestra el encabezado de la aplicación y una breve descripción.
-
-### `ContactList`
-
-Recibe la lista de contactos mediante props y utiliza `.map()` para renderizar cada contacto.
-
-### `ContactCard`
-
-Representa individualmente la información de un contacto.
-
-Recibe mediante props:
-
-```jsx
-name;
-phone;
-email;
-role;
-isFavorite;
-```
-
-La tarjeta modifica su apariencia dependiendo de si el contacto está marcado como favorito.
-
-### `Badge`
-
-Componente reutilizable utilizado para mostrar el rol del contacto.
-
-Recibe dos props:
-
-```jsx
-<Badge text={role} color="var(--role)" />
-```
-
-El componente utiliza `color` para definir el color del texto y `var(--role-bg)` como color de fondo.
-
-Implementación actual:
-
-```jsx
-export default function Badge({ text, color }) {
-  const badgeStyle = {
-    display: "inline-block",
-    padding: "4px 10px",
-    borderRadius: "12px",
-    backgroundColor: "var(--role-bg)",
-    color: color,
-    fontSize: "14px",
-    fontWeight: "600",
-  };
-
-  return <span style={badgeStyle}>{text}</span>;
-}
-```
-
-## 🎨 Estilos
-
-Los colores principales se encuentran definidos como variables CSS en `index.css`.
-
-```css
-:root {
-  --primary: #f3f4f6;
-  --secondary: #646cff;
-  --accent: #b269ea;
-  --bg: #16171d;
-  --border: #b6b4b8;
-
-  --favorite: #ffd700;
-  --favorite-bg: #fffef0;
-
-  --role: #d97706;
-  --role-bg: #fff7ed;
-}
-```
-
-El uso de variables CSS permite reutilizar los colores en diferentes componentes y facilita futuros cambios de diseño.
+- Node.js `>= 24.15.0` (ver `.nvmrc`)
+- pnpm `12.11.2` (`packageManager` en `package.json`)
+- Docker y Docker Compose
 
 ## 🛠️ Instalación
 
-Clona el repositorio:
-
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+pnpm install
+cp .env.example .env
+docker compose up -d
+pnpm db:generate
+pnpm db:deploy
 ```
 
-Ingresa al proyecto:
+`.env` define dos conexiones: `DATABASE_URL` (aplicación) y
+`TEST_DATABASE_URL` (pruebas de integración). El contenedor crea ambas bases en
+la primera inicialización del volumen.
+
+## ▶️ Desarrollo
 
 ```bash
-cd contact-manager
+pnpm dev
 ```
 
-Instala las dependencias:
+La aplicación queda disponible en `http://localhost:3000`.
 
-```bash
-npm install
+## 📜 Scripts
+
+| Comando | Descripción |
+|---|---|
+| `pnpm dev` | Servidor de desarrollo |
+| `pnpm build` | `prisma generate` + build de producción |
+| `pnpm start` | Servidor de producción |
+| `pnpm lint` | ESLint |
+| `pnpm typecheck` | `tsc --noEmit` |
+| `pnpm test` | Todas las suites |
+| `pnpm test:unit` | Suite unitaria (jsdom) |
+| `pnpm test:integration` | Suite de integración (PostgreSQL real) |
+| `pnpm test:coverage` | Cobertura |
+| `pnpm db:generate` | Genera Prisma Client en `src/generated/prisma` |
+| `pnpm db:migrate` | Crea y aplica migraciones (desarrollo) |
+| `pnpm db:deploy` | Aplica migraciones existentes |
+
+## 🗄️ Base de datos
+
+`docker-compose.yaml` levanta PostgreSQL 17 con:
+
+| Base | Uso |
+|---|---|
+| `contact_manager` | Aplicación |
+| `contact_manager_test` | Pruebas de integración |
+
+Las credenciales de desarrollo están en `docker-compose.yaml` y `.env.example`.
+
+## 📁 Estructura (M0)
+
+```text
+contact-manager/
+├── prisma/
+│   └── schema.prisma
+├── src/
+│   ├── app/            # App Router (layout, page, globals.css)
+│   ├── lib/            # env.ts, prisma.ts
+│   └── test/           # setup y pruebas unitarias
+├── tests/
+│   └── integration/    # pruebas contra PostgreSQL real
+├── docker/init/        # creación de la base de pruebas
+├── compose.yaml
+├── prisma.config.ts
+├── next.config.ts
+├── eslint.config.mjs
+├── vitest.config.ts
+└── tsconfig.json
 ```
 
-## ▶️ Ejecutar el proyecto
+## ⚠️ Nota de seguridad
 
-Para iniciar el servidor de desarrollo:
-
-```bash
-npm run dev
-```
-
-Luego abre en el navegador la URL proporcionada por Vite.
-
-## 🔍 Lint
-
-Para revisar el código utilizando ESLint:
-
-```bash
-npm run lint
-```
-
-También puedes utilizar:
-
-```bash
-npx eslint . --fix
-```
-
-para corregir automáticamente algunos problemas que ESLint pueda solucionar.
-
-## 🏗️ Build
-
-Para generar la versión de producción:
-
-```bash
-npm run build
-```
-
-Para comprobar localmente la versión de producción:
-
-```bash
-npm run preview
-```
-
-## 📚 Conceptos practicados
-
-Este proyecto permite practicar conceptos fundamentales de React y JavaScript:
-
-- Componentes funcionales
-- Props
-- Renderizado dinámico
-- `.map()`
-- Condicionales
-- Arrays de objetos
-- Estilos inline
-- Variables CSS
-- Componentes reutilizables
-- Renderizado de listas con `key`
-- Organización de componentes
-- Comunicación entre componentes mediante props
-
-## 🔮 Próximas mejoras
-
-Algunas funcionalidades que podrían incorporarse posteriormente:
-
-- Agregar nuevos contactos.
-- Editar contactos.
-- Eliminar contactos.
-- Marcar y desmarcar favoritos.
-- Buscar contactos.
-- Filtrar contactos por rol.
-- Mostrar todos los contactos o solo favoritos.
-- Persistir los datos utilizando `localStorage`.
-- Conectar la aplicación con una API REST.
-
-## 👨‍💻 Autor
-
-**Gefferson Casasola Huamancusi**
-
-Ingeniero Electrónico y desarrollador de software.
+El MVP usa un único conjunto de datos **sin autenticación**. No debe desplegarse
+públicamente sin un modelo de autorización.
