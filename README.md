@@ -88,7 +88,7 @@ contact-manager/
 ├── tests/
 │   └── integration/    # pruebas contra PostgreSQL real
 ├── docker/init/        # creación de la base de pruebas
-├── compose.yaml
+├── docker-compose.yaml
 ├── prisma.config.ts
 ├── next.config.ts
 ├── eslint.config.mjs
