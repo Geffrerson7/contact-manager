@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CopyButton } from "@/components/ui/CopyButton";
 
 export const metadata: Metadata = {
   title: "Detalle del contacto · Contact Manager",
@@ -17,9 +18,13 @@ export default async function ContactDetailPage({
       <p className="text-slate-600 dark:text-slate-400">
         Placeholder de la ruta dinámica <code>/contact/[id]</code>.
       </p>
-      <p className="text-slate-600 dark:text-slate-400">
-        Identificador recibido: <code>{id}</code>
-      </p>
+      <div className="flex flex-wrap items-center gap-3">
+        <p className="text-slate-600 dark:text-slate-400">
+          Identificador recibido: <code>{id}</code>
+        </p>
+        {/* Frontera servidor → cliente: solo se pasan strings serializables. */}
+        <CopyButton value={id} label="Copiar identificador" />
+      </div>
     </main>
   );
 }
