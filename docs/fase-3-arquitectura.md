@@ -2,7 +2,7 @@
 
 > Documento de arquitectura basado en `prompt-3.md` … `prompt-9.md` y en las decisiones aprobadas en cada revisión.
 > Fecha: 2026-11-03
-> Estado: **aprobado**. Incorpora las correcciones P1–P4 (`prompt-8.md`) y Q1–Q4 (`prompt-9.md`).
+> Estado: **aprobado**. Incorpora las correcciones P1–P4 (`prompt-8.md`), Q1–Q4 (`prompt-9.md`) y la sincronización con las decisiones visuales D-V1–D-V9 (`docs/direccion-visual.md`).
 > Alcance: diseño. No incluye implementación, instalación de dependencias ni ejecución de migraciones (eso es M0 en adelante).
 
 ---
@@ -17,7 +17,7 @@ La Fase 3 convierte el Contact Manager en **un único proyecto Next.js full-stac
 | Framework | Next.js 16 (App Router, Server Components + Route Handlers) |
 | Lenguaje | TypeScript 5.9.3, `strict`, `noUncheckedIndexedAccess` |
 | Persistencia | PostgreSQL 17 vía Prisma 7.10.1 (`prisma-client` generator + `@prisma/adapter-pg`) |
-| Estilos | Tailwind CSS v4 con tokens semánticos en variables CSS; claro/oscuro; sin CSS Modules |
+| Estilos | Tailwind CSS v4 con tokens semánticos en variables CSS; tema oscuro por defecto y tema claro soportado; sin CSS Modules |
 | Pruebas | Vitest 5 + RTL + `user-event` + `jsdom` (unitarias) y PostgreSQL real (integración) |
 | Backend | Route Handlers del mismo proyecto; sin Express, NestJS ni Django |
 
@@ -62,7 +62,7 @@ Precisiones de `prompt-3.md` vigentes: `name` obligatorio y al menos un medio de
 | **N-02** | Borrado lógico + `UndoBatch` + reloj de PostgreSQL + transacciones + purga segura |
 | **N-03** | Dataset único sin autenticación; no apto para despliegue público |
 | **N-04** | Búsqueda en servidor con normalización de texto y de teléfono |
-| **N-05** | Tailwind v4, tokens CSS semánticos, claro/oscuro, sin CSS Modules |
+| **N-05** | Tailwind v4, tokens CSS semánticos, tema oscuro por defecto y tema claro soportado, sin CSS Modules |
 | **N-06** | Versiones exactas + lockfile + `.nvmrc` + `packageManager` |
 | **N-07** | `role` verificado como categoría de relación; enum de 4 valores |
 | **N-08** | `updatedAt` no cambia con favorito, borrado ni restauración; es estrictamente creciente con cambios de contenido |
@@ -1161,15 +1161,22 @@ export async function seed(
 | `SearchField` | Client | Actualiza `q` en la URL; *debounce* ligero |
 | `FavoritesToggle` | Client | `fav=1` en la URL |
 | `PrevNextNav` | RSC | Enlaces calculados sobre la lista filtrada, conservando `q`/`fav`/`from` |
-| `ThemeToggle` | Client | Claro/oscuro/sistema; persiste en `localStorage` |
+| `ThemeToggle` | Client | Alterna entre tema claro y oscuro; persiste en `localStorage`; sin opción «sistema» |
+
+El header (`SiteHeader`) y el footer (`SiteFooter`) son Server Components. La ruta activa de la navegación se resuelve en un Client Component pequeño (`SiteNav`) mediante `usePathname` y `aria-current="page"`; el layout raíz y el header no se convierten en Client Components (D-V4).
 
 ### 13.3 Tema y estilos (N-05)
 
 - Tailwind CSS v4 con `@import "tailwindcss";` en `globals.css`.
 - Tokens semánticos como variables CSS: `--color-bg`, `--color-surface`, `--color-text`, `--color-muted`, `--color-border`, `--color-accent`, `--color-danger`, `--color-focus`.
-- Modo claro por defecto; oscuro por `prefers-color-scheme` y clase en `<html>`.
+- **Tema oscuro por defecto** e identidad principal; el **tema claro también está soportado** en el MVP. Ambos temas comparten el mismo conjunto de tokens semánticos y se validan por separado.
+- El tema se selecciona con una clase en `<html>`: `dark` (predeterminado) o `light`. El tema oscuro se define en `:root` y el claro en `html.light`.
+- **No se usa `prefers-color-scheme` para elegir el tema.** Se reserva para `prefers-reduced-motion` y otras preferencias del sistema.
+- Persistencia en `localStorage` con la clave `contact-manager-theme`; **sin cookies**. Si no existe una preferencia almacenada, se usa el tema oscuro.
+- Un script bloqueante en `<head>` aplica la clase antes del primer pintado para evitar el destello del tema incorrecto; `<html>` usa `suppressHydrationWarning` para la diferencia esperada entre servidor y cliente.
+- `ThemeToggle` (M6) solo ofrece claro y oscuro; no existe un modo «sistema».
 - Sin CSS Modules, sin librerías de UI, sin `styled-components`.
-- Foco visible siempre; contraste mínimo AA.
+- Foco visible siempre; contraste mínimo AA en ambos temas.
 
 ### 13.4 Accesibilidad
 
@@ -1636,7 +1643,7 @@ export default defineConfig({
 | **M3** | `repository` + `service`: CRUD, favorito, undo, purga | Integración de CRUD, undo y purga |
 | **M4** | Route Handlers + `apiRequest<T>` + guardas | Contratos y códigos de error verificados |
 | **M5** | RSC: Home, Search, Detalle, Anterior/Siguiente | Navegación filtrada y `?from=` |
-| **M6** | Cliente: formularios, favorito, borrado, undo, tema | Pruebas de componentes con `user-event` |
+| **M6** | Cliente: formularios, favorito, borrado, undo, tema claro/oscuro | Pruebas de componentes con `user-event` |
 | **M7** | Seed, accesibilidad, estados vacíos/error | S1–S7, C1–C2 y checklist a11y |
 | **M8** | CI, cobertura, README, `.env.example` | Pipeline completo en verde |
 
@@ -1656,7 +1663,7 @@ Cada módulo entrega sus pruebas (A4) y su checklist de accesibilidad (A5).
 | N-02 | Soft delete + undo + reloj de PostgreSQL | Cerrada |
 | N-03 | Sin auth; no apto para público | Cerrada |
 | N-04 | Búsqueda en servidor (texto + teléfono) | Cerrada |
-| N-05 | Tailwind v4, tokens, claro/oscuro | Cerrada |
+| N-05 | Tailwind v4, tokens, tema oscuro por defecto y claro soportado | Cerrada |
 | N-06 | Versiones fijadas + lockfile + `.nvmrc` | Cerrada (alcance definido) |
 | N-07 | `role` = categoría de relación | Cerrada |
 | N-08 | `updatedAt` no cambia con favorito/borrado/restauración; crece con contenido | Cerrada |
