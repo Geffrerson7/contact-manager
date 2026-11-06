@@ -1,0 +1,3 @@
+# Prisma guarda una suma de control de cada migration.sql. Fijar LF evita que
+# core.autocrlf produzca sumas distintas entre Windows y Linux (CI).
+prisma/migrations/**/*.sql text eol=lf
