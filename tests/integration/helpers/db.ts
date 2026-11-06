@@ -33,6 +33,12 @@ export function getTestDatabaseUrl(): string {
     );
   }
 
+  // La base de Neon guarda los datos de la demostración: las pruebas nunca pueden usarla,
+  // aunque alguien la llame `contact_manager_test`.
+  if (/\.neon\.tech$/i.test(new URL(testUrl).hostname)) {
+    throw new Error("TEST_DATABASE_URL apunta a Neon; las pruebas solo usan PostgreSQL local.");
+  }
+
   const testName = databaseNameOf(testUrl, "TEST_DATABASE_URL");
   if (testName !== TEST_DATABASE_NAME) {
     throw new Error(
