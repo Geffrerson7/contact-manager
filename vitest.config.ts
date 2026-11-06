@@ -26,6 +26,8 @@ export default defineConfig({
           name: "integration",
           environment: "node",
           include: ["tests/integration/**/*.int.test.ts"],
+          // Vacía la base de pruebas validada y aplica las migraciones (M1).
+          globalSetup: ["./tests/integration/globalSetup.ts"],
           setupFiles: ["./tests/integration/setup.ts"],
           testTimeout: 15_000,
           hookTimeout: 30_000,
