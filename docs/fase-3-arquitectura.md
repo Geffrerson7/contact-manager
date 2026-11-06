@@ -731,11 +731,13 @@ export interface ContactFilters {
 
 /**
  * Contrato exacto de `data` en GET /api/contacts.
- * No existe `meta`: los contadores ya reflejan los filtros aplicados.
+ * No existe `meta`: los contadores viajan aquí (semántica en §10.3).
  */
 export interface ContactListResult {
   contacts: Contact[];
+  /** Contactos devueltos: cumplen `q` y `onlyFavorites`. Siempre `contacts.length`. */
   total: number;
+  /** Favoritos que cumplen `q`, ignorando `onlyFavorites`. */
   favorites: number;
   filters: ContactFilters;
 }
@@ -783,7 +785,7 @@ export type ApiErrorCode =
 | Código | HTTP | Causa |
 |---|---|---|
 | `INVALID_JSON` | 400 | Cuerpo no es JSON válido |
-| `INVALID_ID` | 400 | `id` o `batchId` no es UUID |
+| `INVALID_ID` | 400 | `id` o `batchId` no es UUID (ver identificadores, abajo) |
 | `VALIDATION_ERROR` | 422 | Campos inválidos; se devuelve `fields` |
 | `NOT_FOUND` | 404 | Contacto inexistente o ya borrado |
 | `CONFLICT` | 409 | Estado incompatible (p. ej. `lock_timeout` 55P03: «operación en curso, reintenta») |
@@ -795,6 +797,12 @@ export type ApiErrorCode =
 | `INTERNAL_ERROR` | 500 | Fallo no clasificado |
 
 Mapeo de PostgreSQL: `55P03` (lock timeout) → `409 CONFLICT`; `40001`/`40P01` → reintento interno y, agotado, `409 CONFLICT`; errores de conexión → `503 DB_UNAVAILABLE`.
+
+Identificadores: todo `id` o `batchId` recibido del exterior (ruta o cuerpo) pasa por `normalizeId()` de `lib/contacts/ids.ts` antes de usarse.
+
+- Solo acepta la forma canónica `8-4-4-4-12` en hexadecimal, sin restricción de versión ni de variante; admite mayúsculas.
+- Si es válido, lo devuelve en minúsculas, como los `uuid` que devuelve PostgreSQL. Las consultas y las comparaciones de cadenas (por ejemplo, Anterior/Siguiente) usan siempre ese valor normalizado.
+- Si no es válido (texto vacío, espacios, llaves `{…}`, sin guiones, otro tipo), devuelve `null` y la API responde `400 INVALID_ID`.
 
 ### 8.4 Cliente HTTP con guardas runtime
 
@@ -843,7 +851,7 @@ Reglas:
 
 ```ts
 export type FieldErrors = Partial<Record<
-  "name" | "phone" | "email" | "role" | "company" | "contactMethod",
+  "name" | "phone" | "email" | "role" | "company" | "isFavorite" | "contactMethod",
   string
 >>;
 
@@ -852,6 +860,9 @@ export type ValidationResult<T> =
   | { ok: false; fieldErrors: FieldErrors };
 ```
 
+- `isFavorite` es una clave válida de `FieldErrors`: la usan `validateContactInput` (POST/PUT, donde `isFavorite` es obligatorio y booleano) y `validateFavoriteInput` (`PATCH /favorite`). No existen claves genéricas como `form`.
+- Si el cuerpo no es un objeto, la validación devuelve `{ ok: false, fieldErrors: {} }`. La API responde `422 VALIDATION_ERROR` con un mensaje general y **sin** `fields` (nunca `fields: {}`).
+- `PATCH` valida solo los campos presentes. El servicio combina el parche con el contacto existente y valida el resultado completo con `validateContactInput`, incluida la regla cruzada `phone` o `email`; así un `PATCH` no puede dejar un contacto sin medio de contacto.
 - `VALIDATION_ERROR` devuelve `fields` y el formulario los muestra junto a cada campo (`aria-describedby`, `aria-invalid`).
 - La validación es puramente funcional, sin dependencias, y se reutiliza en cliente (feedback inmediato) y servidor (autoridad).
 - El servidor **no confía** en la validación del cliente: siempre revalida.
@@ -939,7 +950,19 @@ export function selectFilteredContacts(
 }
 ```
 
-`total` y `favorites` se calculan con la **misma** función: `total` = longitud del resultado; `favorites` = favoritos entre los resultados.
+Los contadores de `ContactListResult` se calculan con la **misma** función de filtrado:
+
+- `total` = número de contactos devueltos, que cumplen `q` **y** `onlyFavorites`.
+- `favorites` = favoritos que cumplen `q`, **ignorando** `onlyFavorites`.
+
+```ts
+const matching = selectFilteredContacts(contacts, { q, onlyFavorites: false });
+const favorites = matching.filter((contact) => contact.isFavorite);
+const returned = onlyFavorites ? favorites : matching;
+// total = returned.length; favorites = favorites.length
+```
+
+Ejemplo: si `q` encuentra 3 contactos y 2 son favoritos, sin el filtro de favoritos `total = 3` y `favorites = 2`; con `onlyFavorites` activo, `total = 2` y `favorites = 2`.
 
 ### 10.4 Casos de referencia
 

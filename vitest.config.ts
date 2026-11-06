@@ -10,6 +10,20 @@ export default defineConfig({
     },
   },
   test: {
+    coverage: {
+      provider: "v8",
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: ["src/generated/**", "src/test/**", "**/*.test.{ts,tsx}"],
+      thresholds: {
+        // §14.11: dominio ≥ 90 %. Los umbrales de servicio, componentes y global llegan en M3–M8.
+        "src/lib/contacts/{ids,validation,search,selectors,mappers}.ts": {
+          statements: 90,
+          branches: 90,
+          functions: 90,
+          lines: 90,
+        },
+      },
+    },
     projects: [
       {
         extends: true,
