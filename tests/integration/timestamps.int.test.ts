@@ -1,17 +1,24 @@
-// Timestamps (§6, §14.6). En M1 solo se implementa T8; T1–T7 y T9–T11 se
-// añaden en M3, cuando existan el repositorio y el servicio.
+// Timestamps (§6, §14.6). T8 (M1) verifica la invariante a nivel de SQL; T1–T7 y
+// T9–T11 (M3) la verifican a través del servicio y el repositorio reales.
 
 import pg from "pg";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import type { PrismaClient } from "@/generated/prisma/client";
+import type { ContactsService } from "@/lib/contacts/service";
+import { createTestPrisma, createTestService, input } from "./helpers/app";
 import { connectToTestDatabase, truncateAll, withContactsTriggerDisabled } from "./helpers/db";
 
 const CHECK_VIOLATION = "23514";
 const TIMESTAMPS_CHECK = "contacts_timestamps_check";
 
 let client: pg.Client;
+let prisma: PrismaClient;
+let service: ContactsService;
 
 beforeAll(async () => {
   client = await connectToTestDatabase();
+  prisma = createTestPrisma();
+  service = createTestService(prisma);
 });
 
 afterEach(async () => {
@@ -19,6 +26,7 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
+  await prisma?.$disconnect();
   await client?.end();
 });
 
@@ -130,6 +138,121 @@ describe("timestamps de contactos", () => {
       `SELECT count(*)::int AS "count" FROM "contacts"`,
     );
     expect(total[0]!.count).toBe(3);
+    expect(await countInvariantViolations()).toBe(0);
+  });
+});
+
+/** Coloca `updatedAt` una hora por delante del reloj de PostgreSQL (simula reloj atrasado). */
+async function pushUpdatedAtIntoFuture(id: string): Promise<number> {
+  const { rows } = await client.query<{ t: Date }>(
+    `SELECT date_trunc('milliseconds', clock_timestamp() + interval '1 hour') AS t`,
+  );
+  const future = rows[0]!.t;
+  await withContactsTriggerDisabled(client, () =>
+    client.query(`UPDATE "contacts" SET "updatedAt" = $1 WHERE "id" = $2::uuid`, [future, id]),
+  );
+  return future.getTime();
+}
+
+const ms = (iso: string) => new Date(iso).getTime();
+
+describe("timestamps a través del servicio (T1–T7, T9–T11)", () => {
+  it("T1 — crear: createdAt = updatedAt", async () => {
+    const created = await service.create(input());
+    expect(created.updatedAt).toBe(created.createdAt);
+  });
+
+  it("T2 — editar name: updatedAt > createdAt y > el anterior", async () => {
+    const created = await service.create(input());
+    const first = await service.patch(created.id, { name: "Uno" });
+    const second = await service.replace(created.id, input({ name: "Dos" }));
+
+    expect(ms(first.updatedAt)).toBeGreaterThan(ms(created.createdAt));
+    expect(ms(second.updatedAt)).toBeGreaterThan(ms(first.updatedAt));
+    expect(second.createdAt).toBe(created.createdAt);
+  });
+
+  it("T3 — alternar favorito: updatedAt idéntico", async () => {
+    const created = await service.create(input());
+    const on = await service.setFavorite(created.id, { isFavorite: true });
+    const off = await service.setFavorite(created.id, { isFavorite: false });
+    expect([on.updatedAt, off.updatedAt]).toEqual([created.updatedAt, created.updatedAt]);
+  });
+
+  it("T4 — deleteAll: updatedAt intacto en los 3", async () => {
+    const created = [
+      await service.create(input({ name: "A" })),
+      await service.create(input({ name: "B" })),
+      await service.create(input({ name: "C" })),
+    ];
+    await service.deleteAll();
+
+    const { rows } = await client.query<{ id: string; updatedAt: Date }>(
+      `SELECT "id", "updatedAt" FROM "contacts" ORDER BY "createdAt", "id"`,
+    );
+    expect(rows.map((row) => row.updatedAt.toISOString())).toEqual(
+      created.map((contact) => contact.updatedAt),
+    );
+  });
+
+  it("T5 — restaurar: updatedAt intacto", async () => {
+    const created = await service.create(input());
+    const { batchId } = await service.deleteOne(created.id);
+    await service.restore({ batchId });
+    expect((await service.get(created.id)).updatedAt).toBe(created.updatedAt);
+  });
+
+  it("T6 — UPDATE con los mismos valores: updatedAt intacto", async () => {
+    const created = await service.create(input());
+    await client.query(
+      `UPDATE "contacts" SET "name" = "name", "email" = "email" WHERE "id" = $1::uuid`,
+      [created.id],
+    );
+    await service.replace(created.id, input());
+    expect((await service.get(created.id)).updatedAt).toBe(created.updatedAt);
+  });
+
+  it("T7 — UPDATE manual de createdAt/updatedAt: se revierte", async () => {
+    const created = await service.create(input());
+    await client.query(
+      `UPDATE "contacts"
+          SET "createdAt" = clock_timestamp() - interval '1 year',
+              "updatedAt" = clock_timestamp() + interval '1 year'
+        WHERE "id" = $1::uuid`,
+      [created.id],
+    );
+    expect(await service.get(created.id)).toEqual(created);
+  });
+
+  it("T9 — reloj atrasado: una edición produce exactamente futuro + 1 ms", async () => {
+    const created = await service.create(input());
+    const future = await pushUpdatedAtIntoFuture(created.id);
+
+    const edited = await service.patch(created.id, { name: "Nombre nuevo" });
+    expect(ms(edited.updatedAt)).toBe(future + 1);
+  });
+
+  it("T10 — dos ediciones en el mismo ms: updatedAt₂ = updatedAt₁ + 1 ms", async () => {
+    const created = await service.create(input());
+    const future = await pushUpdatedAtIntoFuture(created.id);
+
+    // Con el valor almacenado por delante del reloj, ambas ediciones caen «en el mismo ms».
+    const first = await service.patch(created.id, { name: "Uno" });
+    const second = await service.patch(created.id, { name: "Dos" });
+    expect(ms(first.updatedAt)).toBe(future + 1);
+    expect(ms(second.updatedAt)).toBe(future + 2);
+  });
+
+  it("T11 — 50 ediciones: estrictamente creciente en cada paso", async () => {
+    const created = await service.create(input());
+    let previous = ms(created.updatedAt);
+
+    for (let i = 0; i < 50; i += 1) {
+      const edited = await service.patch(created.id, { name: `Edición ${i}` });
+      const current = ms(edited.updatedAt);
+      expect(current).toBeGreaterThan(previous);
+      previous = current;
+    }
     expect(await countInvariantViolations()).toBe(0);
   });
 });

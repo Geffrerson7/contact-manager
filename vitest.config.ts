@@ -15,12 +15,19 @@ export default defineConfig({
       include: ["src/**/*.{ts,tsx}"],
       exclude: ["src/generated/**", "src/test/**", "**/*.test.{ts,tsx}"],
       thresholds: {
-        // §14.11: dominio ≥ 90 %. Los umbrales de servicio, componentes y global llegan en M3–M8.
+        // §14.11: dominio ≥ 90 %. Los umbrales de componentes y global llegan en M5–M8.
         "src/lib/contacts/{ids,validation,search,selectors,mappers}.ts": {
           statements: 90,
           branches: 90,
           functions: 90,
           lines: 90,
+        },
+        // §14.11: servicio (y handlers, M4) ≥ 85 %. El repositorio se cubre con integración.
+        "src/lib/{env,contacts/{service,repository,errors,undo}}.ts": {
+          statements: 85,
+          branches: 85,
+          functions: 85,
+          lines: 85,
         },
       },
     },

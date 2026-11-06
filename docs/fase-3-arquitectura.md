@@ -23,7 +23,7 @@ La Fase 3 convierte el Contact Manager en **un único proyecto Next.js full-stac
 
 **Fuera del MVP:** autenticación, multi-usuario, `birthday`, `avatar`, `jobTitle`, `notes`, `address`, multi-selección, filtro por rol, Playwright.
 
-**Advertencia de despliegue:** el MVP usa un dataset único sin autenticación. Cualquier despliegue público expone lectura y escritura completas. No debe publicarse sin un modelo de autorización (`ownerId` u equivalente), que queda fuera de alcance.
+**Advertencia de despliegue:** el MVP usa un dataset único sin autenticación. Cualquier despliegue público en modo `read-write` expone lectura y escritura completas. No debe publicarse con escritura sin un modelo de autorización (`ownerId` u equivalente), que queda fuera de alcance. La demostración pública se publica en modo de solo lectura (`CONTACTS_ACCESS_MODE=read-only` + rol de base de datos de solo lectura); ver `docs/despliegue-demo.md`.
 
 ---
 
@@ -410,7 +410,7 @@ FOR EACH ROW
 EXECUTE FUNCTION "contacts_before_update"();
 ```
 
-### 5.4 Restricción opcional recomendada
+### 5.4 Restricción de medio de contacto (migración `0004_contactable_check`)
 
 ```sql
 ALTER TABLE "contacts"
@@ -418,7 +418,7 @@ ALTER TABLE "contacts"
   CHECK ("email" <> '' OR "phone" <> '');
 ```
 
-Refleja la regla de validación «al menos un medio de contacto». Se aplica también en el servicio para devolver `VALIDATION_ERROR` con mensaje de campo en lugar de un error de base.
+Refleja la regla de validación «al menos un medio de contacto». Se aplica también en el servicio para devolver `VALIDATION_ERROR` con mensaje de campo en lugar de un error de base. Aprobada en M3 como defensa en profundidad y aplicada en la migración `0004_contactable_check`, sin modificar `0001`–`0003`.
 
 ### 5.5 Invariantes
 
@@ -777,6 +777,7 @@ export type ApiErrorCode =
   | "UNDO_NOT_FOUND"
   | "UNDO_EXPIRED"
   | "UNDO_INCONSISTENT"
+  | "READ_ONLY"
   | "METHOD_NOT_ALLOWED"
   | "DB_UNAVAILABLE"
   | "INTERNAL_ERROR";
@@ -792,11 +793,14 @@ export type ApiErrorCode =
 | `UNDO_NOT_FOUND` | 404 | Lote inexistente |
 | `UNDO_EXPIRED` | 410 | Lote fuera de la ventana de 5 s |
 | `UNDO_INCONSISTENT` | 409 | `contactCount` no coincide con los contactos vinculados |
+| `READ_ONLY` | 403 | Escritura en un despliegue de solo lectura (demo): `POST`, `PUT`, `PATCH`, `DELETE` y restauración |
 | `METHOD_NOT_ALLOWED` | 405 | Método no soportado |
 | `DB_UNAVAILABLE` | 503 | Conexión a PostgreSQL no disponible |
 | `INTERNAL_ERROR` | 500 | Fallo no clasificado |
 
-Mapeo de PostgreSQL: `55P03` (lock timeout) → `409 CONFLICT`; `40001`/`40P01` → reintento interno y, agotado, `409 CONFLICT`; errores de conexión → `503 DB_UNAVAILABLE`.
+Mapeo de PostgreSQL: `55P03` (lock timeout) → `409 CONFLICT`; `40001`/`40P01` → reintento interno y, agotado, `409 CONFLICT`; errores de conexión → `503 DB_UNAVAILABLE`; `25006` (transacción de solo lectura) y `42501` (sin privilegios) → `403 READ_ONLY`; `23514` de `contacts_contactable_check` → `422 VALIDATION_ERROR` con `fields.contactMethod`.
+
+Solo lectura: el modo lo fija el servidor con `CONTACTS_ACCESS_MODE` (`read-only` | `read-write`; sin valor, `read-only` en producción), nunca la petición. El servicio rechaza toda escritura con `READ_ONLY` antes de validar el id o el cuerpo, y en ese modo las lecturas no ejecutan la purga oportunista. Detalle y rol de base de datos de solo lectura en `docs/despliegue-demo.md`.
 
 Identificadores: todo `id` o `batchId` recibido del exterior (ruta o cuerpo) pasa por `normalizeId()` de `lib/contacts/ids.ts` antes de usarse.
 

@@ -16,7 +16,7 @@ afterAll(async () => {
 });
 
 describe("migraciones de Prisma", () => {
-  it("aplica exactamente 0001, 0002 y 0003, sin fallos ni reversiones", async () => {
+  it("aplica exactamente 0001–0004, sin fallos ni reversiones", async () => {
     const { rows } = await client.query<{
       migration_name: string;
       finished: boolean;
@@ -33,10 +33,11 @@ describe("migraciones de Prisma", () => {
       { migration_name: "0001_init", finished: true, rolled_back: false },
       { migration_name: "0002_undo_integrity", finished: true, rolled_back: false },
       { migration_name: "0003_contact_timestamps", finished: true, rolled_back: false },
+      { migration_name: "0004_contactable_check", finished: true, rolled_back: false },
     ]);
   });
 
-  it("crea los CHECK de integridad (§5.2) y de timestamps (§5.3)", async () => {
+  it("crea los CHECK de integridad (§5.2), timestamps (§5.3) y medio de contacto (§5.4)", async () => {
     const { rows } = await client.query<{ name: string; table: string; definition: string }>(
       `SELECT "conname" AS "name",
               "conrelid"::regclass::text AS "table",
@@ -47,8 +48,14 @@ describe("migraciones de Prisma", () => {
         ORDER BY "conname"`,
     );
 
-    // Lista exacta: contacts_contactable_check (§5.4) está aplazado a propósito.
+    // Lista exacta: cualquier CHECK de más o de menos hace fallar la prueba.
     expect(rows).toEqual([
+      {
+        name: "contacts_contactable_check",
+        table: "contacts",
+        definition:
+          "CHECK ((((email)::text <> ''::text) OR ((phone)::text <> ''::text)))",
+      },
       {
         name: "contacts_deleted_pair_check",
         table: "contacts",
